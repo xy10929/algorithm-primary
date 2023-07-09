@@ -1,4 +1,5 @@
 package class04;
+
 //lc2
 public class Code05_AddTwoNumbers {
 
@@ -24,9 +25,9 @@ public class Code05_AddTwoNumbers {
 		ListNode s = l == l1 ? l2 : l1;
 		ListNode curL = l;
 		ListNode curS = s;
-		int carry = 0;//进位
-		int num = 0;//和
-		ListNode last = curL;//跟踪最后一个节点 便于往后加节点
+		int carry = 0;// 进位
+		int num = 0;// 和
+		ListNode last = curL;// 跟踪最后一个节点 便于往后加节点
 		while (curS != null) {
 			num = curS.val + curL.val + carry;
 			curL.val = num % 10;

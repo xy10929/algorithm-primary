@@ -1,7 +1,8 @@
 package class04;
+
 //lc206
 public class Code01_ReverseList {
-	
+
 	// 不要提交这个类
 	public class ListNode {
 		int val;
@@ -19,9 +20,9 @@ public class Code01_ReverseList {
 			this.next = next;
 		}
 	}
-	
-	//下(头下)前头
-	//双-下头下(头上下)前头
+
+	// 下(头下)前头
+	// 双-下头下(头上下)前头
 	public ListNode reverseList(ListNode head) {
 		ListNode pre = null;
 		ListNode next = null;

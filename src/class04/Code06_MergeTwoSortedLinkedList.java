@@ -1,4 +1,5 @@
 package class04;
+
 //lc21
 public class Code06_MergeTwoSortedLinkedList {
 
@@ -12,10 +13,10 @@ public class Code06_MergeTwoSortedLinkedList {
 		if (l1 == null || l2 == null) {
 			return l1 == null ? l2 : l1;
 		}
-		ListNode head = l1.val < l2.val ? l1 : l2;//较小的为head
+		ListNode head = l1.val < l2.val ? l1 : l2;// 较小的为head
 		ListNode cur1 = head.next;
 		ListNode cur2 = head == l1 ? l2 : l1;
-		ListNode pre = head;//已连好的串的结尾
+		ListNode pre = head;// 已连好的串的结尾
 		while (cur1 != null && cur2 != null) {
 			if (cur1.val < cur2.val) {
 				pre.next = cur1;
@@ -26,7 +27,7 @@ public class Code06_MergeTwoSortedLinkedList {
 			}
 			pre = pre.next;
 		}
-		pre.next = cur1 != null ? cur1 : cur2;//一个链已连完 另一个链的剩余部分直接接上
+		pre.next = cur1 != null ? cur1 : cur2;// 一个链已连完 另一个链的剩余部分直接接上
 		return head;
 	}
 
