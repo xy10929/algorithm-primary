@@ -187,6 +187,12 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 
 @不用乘 除 模 实现除法
 
+乘法  
+根据乘法算式 第二个乘数当前位如果为 1 则照抄第一个乘数到应放的位置(位移后累加进结果) 如果为 0 则跳过
+
+除法  
+把除数左移 直到不超过被除数的极限位置 被除数减去该结果 当前位商 1
+
 ```java
 public static int multi(int a, int b) {
   int res = 0;
@@ -237,6 +243,9 @@ public int divide(int a, int b) {
 ### lc23
 
 @合并 n 个有序链表
+
+将每一个头节点放入小根堆 每次谈出值最小的节点 放入其 next 节点  
+定义比较器来对节点排序
 
 ```java
 public static class ListNode {
@@ -303,6 +312,8 @@ public boolean isSameTree(TreeNode p, TreeNode q) {
 
 @判断二叉树是否镜像
 
+把该树看作相同头节点的两颗树 判断它们是否镜像
+
 ```java
 public boolean isSymmetric(TreeNode root) {
   return isMirror(root, root);
@@ -336,6 +347,10 @@ public int maxDepth(TreeNode root) {
 
 @根据先序 中序结果建立二叉树
 
+在函数中  
+整个树的头为先序第一个数 在中序中找到这个数 左树即由这个数之前的数组成 确定数字个数后可知在先序中的 index 范围 左树可由递归调用该函数生成  
+可以用表记录 in[]每个值的位置 找 find 时直接查表
+
 ```java
 public TreeNode buildTree(int[] pre, int[] in) {
   HashMap<Integer, Integer> indexMap = new HashMap<>();
@@ -367,6 +382,13 @@ public static TreeNode f(int[] pre, int l1, int r1, int[] in, int l2, int r2, Ha
 ### lc107
 
 @从下向上按层返回二叉树的遍历结果
+
+用 LinkedList 收集代表每一层的 list 新生成的 list 每次都放在最前
+头节点放入队列  
+队列非空时 循环进行下列操作  
+⑴ 求队列的 size 进行 size 次的 ⑵-size 会变化 先抓取当前层的节点个数  
+⑵ 弹出节点 把它的 val 加入当前层的队列 然后将其左右节点(如果有)加入队列  
+⑶ 把当前层队列放入结果队列的 0 位置
 
 ```java
 public List<List<Integer>> levelOrderBottom(TreeNode root) {
@@ -429,6 +451,11 @@ public static info process(TreeNode root) {
 ### lc112
 
 @判断二叉树从头到底部是否存在路径 和为目标值
+
+⑴ 节点已无左右节点-节点的值是否为目标值  
+⑵ 返回值先设为 false  
+❶ 有左节点 则递归调用 f(左节点,目标值-当前节点值) 将结果或进 ans  
+❷ 有右节点 则递归调用 f(右节点,目标值-当前节点值) 将结果或进 ans
 
 ```java
 public boolean hasPathSum(TreeNode root, int targetSum) {
