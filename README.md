@@ -31,29 +31,18 @@ Leetcode problems in data stucture & algorithm course by [Chengyun Zuo](https://
 
 下头<u>下前</u>头
 
-指针 pre next 最初指向 null  
-head 指向反转后的链表头
-
-while head 不为空  
-{
-下=头下(提前记录下一个要处理的节点)  
-头下=前(反转链)  
-前=头(用 pre 记录已完成反转的部分的最新节点 它将作为下一次反转的目标)  
-头=下(head 到达之前记录的下一个要处理的节点)  
-}  
-return 前
-
 ```java
 public ListNode reverseList(ListNode head) {
-    ListNode pre = null;
-    ListNode next = null;
-    while(head != null){
-        next = head.next;
-        head.next = pre;
-        pre = head;
-        head = next;
-    }
-    return pre;
+  // head记录尚未完成反转的部分的头
+  ListNode pre = null;
+  ListNode next = null;
+  while (head != null) {
+    next = head.next;// 提前记录下一个要处理的节点
+    head.next = pre;// 反转链
+    pre = head;// 用pre记录已完成反转的部分的最新节点 它将作为下一次反转的目标
+    head = next;// head到达之前记录的下一个要处理的节点
+  }
+  return pre;
 }
 ```
 
@@ -103,6 +92,54 @@ public static void reverse(ListNode start, ListNode end) {// start到end逆序
     head = next;
   }
   start.next = end;// 原头为逆序后的尾 连向记录好的位置
+}
+```
+
+### lc2
+
+@两个链表从左到右分别表示一个数 把它们相加 返回代表结果的新链表
+
+求出两链表的长度 根据<u>长短链表中有无遍历到的节点</u>分 3 部分计算 结果放入长链表
+
+```java
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+  int len1 = listLength(l1);
+  int len2 = listLength(l2);
+  ListNode l = len1 > len2 ? l1 : l2;
+  ListNode s = l == l1 ? l2 : l1;
+  ListNode curL = l;
+  ListNode curS = s;
+  int carry = 0;// 进位
+  int num = 0;// 和
+  ListNode last = curL;// 跟踪最后一个节点 便于往后加节点
+  while (curS != null) {
+    num = curS.val + curL.val + carry;
+    curL.val = num % 10;
+    carry = num / 10;
+    last = curL;
+    curS = curS.next;
+    curL = curL.next;
+  }
+  while (curL != null) {
+    num = curL.val + carry;
+    curL.val = num % 10;
+    carry = num / 10;
+    last = curL;
+    curL = curL.next;
+  }
+  if (carry != 0) {
+    last.next = new ListNode(1);
+  }
+  return l;
+}
+
+public int listLength(ListNode head) {
+  int ans = 0;
+  while (head != null) {
+    head = head.next;
+    ans++;
+  }
+  return ans;
 }
 ```
 
