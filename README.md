@@ -2,9 +2,6 @@
 
 Leetcode problems in data stucture & algorithm course by [Chengyun Zuo](https://github.com/algorithmzuo/algorithm-primary)
 
-- [class01](#class01)
-- [class02](#class02)
-- [class03](#class03)
 - [class04](#class04)
   - [lc206 反转单链表](#lc206)
   - [lc25 k 个节点一组 逆序单链表](#lc25)
@@ -24,13 +21,6 @@ Leetcode problems in data stucture & algorithm course by [Chengyun Zuo](https://
   - [lc112 判断二叉树从头到底部是否存在路径 和为目标值](#lc112)
   - [lc113 返回二叉树从头到底部和为目标值的所有路径](#lc113)
   - [lc98 判断是否为搜索二叉树](#lc98)
-- [class08](#class08)
-
-## class01
-
-## class02
-
-## class03
 
 ## class04
 
@@ -59,38 +49,45 @@ public ListNode reverseList(ListNode head) {
 
 @k 个节点一组 逆序单链表
 
+getGroupEnd(start,k)返回组内最后一个 不够 k 个则返回 null  
+reverse(start,end)反转一个链中对应范围内的节点 逆序后的结尾接入原链表  
+先找到第一组 以确定要返回的头  
+逆序后的开头需要被上一组的结尾指向 所以需要一个指针记录上一组的结尾
+
 ```java
 public ListNode reverseKGroup(ListNode head, int k) {
   ListNode start = head;
-  ListNode end = getGroupEnd(start, k);
+  ListNode end = getGroup(start, k);
   if (end == null) {// 一组也凑不齐
     return head;
   }
-  head = end;// 第一组逆序后的头为整个链最后的头 不变
-  reverse(start, end);// 完成组内反转 但start和end指向的节点不变
-  ListNode lastEnd = start;// 上一组的结尾节点即start
+  reverse(start, end);
+  head = end;// 第一组反转后的开头为要返回的结果的开头 所以不需要被其他节点指向
+  ListNode lastEnd = start;// 之后每次反转后的结尾都需要记录 以指向下一组反转结果的开头
   while (lastEnd.next != null) {
     start = lastEnd.next;// 找到下一组的start
-    end = getGroupEnd(start, k);
+    end = getGroup(start, k);
     if (end == null) {
       return head;
     }
     reverse(start, end);
-    lastEnd.next = end;// 反转后end为当前组的开头 被上一组的结尾指向
-    lastEnd = start;// start反转后为当前组的结尾 也即此后的上一组的结尾
+    lastEnd.next = end;// 上一组的结尾指向当前组反转后的开头
+    lastEnd = start;// 把当前组的结尾更新为lastEnd
   }
   return head;
 }
 
-public static ListNode getGroupEnd(ListNode start, int k) {// start开始数k个 返回组内最后一个 不够k个会返回null
-  while (--k != 0 && start != null) {
+public ListNode getGroup(ListNode start, int k) {
+  while (start != null && k > 1) {// 从start开始数k个 返回组内最后一个 不够k个则返回null
     start = start.next;
+    k--;
   }
   return start;
 }
 
-public static void reverse(ListNode start, ListNode end) {// start到end逆序
-  end = end.next;// 记录逆序后要连向的位置
+// 链表中start到end范围逆序 逆序后的结尾接入原链表
+public void reverse(ListNode start, ListNode end) {
+  end = end.next;// 记录 在原链表中 逆序后结尾要连向的位置
   ListNode pre = null;
   ListNode next = null;
   ListNode head = start;
@@ -100,7 +97,7 @@ public static void reverse(ListNode start, ListNode end) {// start到end逆序
     pre = head;
     head = next;
   }
-  start.next = end;// 原头为逆序后的尾 连向记录好的位置
+  start.next = end;// 逆序后的结尾接入原链表
 }
 ```
 
@@ -575,5 +572,3 @@ public info process(TreeNode n) {
   return new info(isBST, max, min);
 }
 ```
-
-## class08
