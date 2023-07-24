@@ -21,39 +21,39 @@ public class Code05_AddTwoNumbers {
 	public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 		int len1 = listLength(l1);
 		int len2 = listLength(l2);
-		ListNode l = len1 > len2 ? l1 : l2;
+		ListNode l = len1 > len2 ? l1 : l2;// 最后返回长链表的头
 		ListNode s = l == l1 ? l2 : l1;
-		ListNode curL = l;
+		int sum = 0;
+		int carry = 0;
+		ListNode curL = l;// 遍历时的链表指针
 		ListNode curS = s;
-		int carry = 0;// 进位
-		int num = 0;// 和
-		ListNode last = curL;// 跟踪最后一个节点 便于往后加节点
-		while (curS != null) {
-			num = curS.val + curL.val + carry;
-			curL.val = num % 10;
-			carry = num / 10;
-			last = curL;
+		ListNode cur = l;
+		while (curS != null) {// 尚未遍历完短链表
+			sum = curS.val + curL.val + carry;
+			curL.val = sum % 10;
+			carry = sum / 10;
+			cur = curL;// 记录目前的结果链表的末端
+			curL = curL.next;
 			curS = curS.next;
+		}
+		while (curL != null) {// 已遍历完短链表
+			sum = curL.val + carry;
+			curL.val = sum % 10;
+			carry = sum / 10;
+			cur = curL;
 			curL = curL.next;
 		}
-		while (curL != null) {
-			num = curL.val + carry;
-			curL.val = num % 10;
-			carry = num / 10;
-			last = curL;
-			curL = curL.next;
-		}
-		if (carry != 0) {
-			last.next = new ListNode(1);
+		if (carry == 1) {
+			cur.next = new ListNode(1);
 		}
 		return l;
 	}
 
-	public int listLength(ListNode head) {
-		int ans = 0;
-		while (head != null) {
-			head = head.next;
+	public int listLength(ListNode n) {
+		int ans = 1;
+		while (n.next != null) {
 			ans++;
+			n = n.next;
 		}
 		return ans;
 	}

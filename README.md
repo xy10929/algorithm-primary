@@ -105,45 +105,48 @@ public void reverse(ListNode start, ListNode end) {
 
 @两个链表从左到右分别表示一个数 把它们相加 返回代表结果的新链表
 
-求出两链表的长度 根据<u>长短链表中有无遍历到的节点</u>分 3 部分计算 结果放入长链表
+求出两链表的长度 把结果放入长链表  
+同时遍历两链表 分为 短链表未完 和 短链表已完 两个阶段  
+最后如果有进位 再生成节点 1
+为了记录最后的位置 设置相应的指针跟随遍历
 
 ```java
 public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
   int len1 = listLength(l1);
   int len2 = listLength(l2);
-  ListNode l = len1 > len2 ? l1 : l2;
+  ListNode l = len1 > len2 ? l1 : l2;// 最后返回长链表的头
   ListNode s = l == l1 ? l2 : l1;
-  ListNode curL = l;
+  int sum = 0;
+  int carry = 0;
+  ListNode curL = l;// 遍历时的链表指针
   ListNode curS = s;
-  int carry = 0;// 进位
-  int num = 0;// 和
-  ListNode last = curL;// 跟踪最后一个节点 便于往后加节点
-  while (curS != null) {
-    num = curS.val + curL.val + carry;
-    curL.val = num % 10;
-    carry = num / 10;
-    last = curL;
+  ListNode cur = l;
+  while (curS != null) {// 尚未遍历完短链表
+    sum = curS.val + curL.val + carry;
+    curL.val = sum % 10;
+    carry = sum / 10;
+    cur = curL;// 记录目前的结果链表的末端
+    curL = curL.next;
     curS = curS.next;
+  }
+  while (curL != null) {// 已遍历完短链表
+    sum = curL.val + carry;
+    curL.val = sum % 10;
+    carry = sum / 10;
+    cur = curL;
     curL = curL.next;
   }
-  while (curL != null) {
-    num = curL.val + carry;
-    curL.val = num % 10;
-    carry = num / 10;
-    last = curL;
-    curL = curL.next;
-  }
-  if (carry != 0) {
-    last.next = new ListNode(1);
+  if (carry == 1) {
+    cur.next = new ListNode(1);
   }
   return l;
 }
 
-public int listLength(ListNode head) {
-  int ans = 0;
-  while (head != null) {
-    head = head.next;
+public int listLength(ListNode n) {
+  int ans = 1;
+  while (n.next != null) {
     ans++;
+    n = n.next;
   }
   return ans;
 }
@@ -152,6 +155,11 @@ public int listLength(ListNode head) {
 ### lc21
 
 @合并两个有序链表 使返回的链表仍有序
+
+先比较两个头结点 以确定要返回的头
+用指针记录当前遍历到的两个链表的位置 和已完成 merge 的部分的末尾  
+在两链表都没有到末尾时 把较小的节点挂进结果  
+只剩一个链表时 直接用完成 merge 部分的末尾连接剩余的部分
 
 ```java
 public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
