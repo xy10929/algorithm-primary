@@ -363,7 +363,7 @@ public TreeNode buildTree(int[] pre, int[] in) {
 }
 
 public static TreeNode f(int[] pre, int l1, int r1, int[] in, int l2, int r2, HashMap<Integer, Integer> indexMap) {
-  if (l1 > r1) {
+  if (l1 > r1) { //find和l2或r2重合时 原位置应为空树
     return null;
   }
   TreeNode head = new TreeNode(pre[l1]);
