@@ -17,11 +17,11 @@ public class Code02_SameTree {
 
 	public boolean isSameTree(TreeNode p, TreeNode q) {
 		// 先检查头结点 再递归地检查其左树和右树
-		if (p == null ^ q == null) {// 一空一非空
-			return false;
-		}
 		if (p == null && q == null) {// 都空
 			return true;
+		}
+		if (p == null ^ q == null) {// 一空一非空
+			return false;
 		}
 		return p.val == q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
 	}

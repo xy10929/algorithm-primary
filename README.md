@@ -190,33 +190,35 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 
 ### lc29
 
-@不用乘 除 模 实现除法
+@不用乘除模 实现除法
 
 乘法  
 根据乘法算式 第二个乘数当前位如果为 1 则照抄第一个乘数到应放的位置(位移后累加进结果) 如果为 0 则跳过
 
 除法  
-把除数左移 直到不超过被除数的极限位置 被除数减去该结果 当前位商 1
+把除数左移 直到不超过被除数的极限位置 则当前位商 1  
+最后从被除数减去移位后的结果 继续计算
 
 ```java
 public static int multi(int a, int b) {
   int res = 0;
+  //为了提取第二个乘数的每一位 每次都把它右移一位 然后提取最低位
   while (b != 0) {// 第二个乘数为0时 表示其每一位都与第一个乘数相乘过了
-    if ((b & 1) != 0) {// 确认第二个乘数当前为是否为1
+    if ((b & 1) != 0) {// 确认第二个乘数当前位是否为1
       res += a;// 为1 则把左移的b的1与a相乘的结果(转换为左移的a乘以b的1)累加进res
     }
-    a <<= 1;
-    b >>>= 1;// 第二个乘数每次右移 以把下一位次低位的结果移到最低位
+    a <<= 1;// 第一个乘数左移到下一位
+    b >>>= 1;// 为了提取各个位的值 第二个乘数每次右移
   }
   return res;
 }
 
 public static int div(int a, int b) {
-  int x = Math.abs(a);
-  int y = Math.abs(b);// 转为绝对值
+  int x = Math.abs(a);// 转为绝对值
+  int y = Math.abs(b);
   int ans = 0;
-  for (int i = 30; i >= 0; i--) {// i表示移动的位数 从最大可能向下尝试 找到符合条件的极限位置 x确保非负 最高位为0 所以不需要把它移到最低位去尝试
-    if ((x >> i) >= y) {// 被除数x右移来接进除数y 等价于 y左移接近x 防止y左移至符号位
+  for (int i = 30; i >= 0; i--) {// i表示移动的位数 从最大可能开始尝试 找到符合条件的极限位置 x确保非负 最高位为0 所以不需要把它移到最低位去尝试
+    if ((x >> i) >= y) {// 被除数x右移来接近除数y 等价于 y左移接近x 防止y左移至符号位
       ans |= (1 << i);// 移动的位数对应的位置商1
       x -= (y << i);// 从被除数减去
     }
@@ -225,20 +227,19 @@ public static int div(int a, int b) {
 }
 
 public int divide(int a, int b) {
-  if (a == b) {
-    return 1;
-  } else if (b == Integer.MIN_VALUE) {// 肯定不够除
-    return 0;
-  } else if (a == Integer.MIN_VALUE) {
-    if (b == -1) {
-      return Integer.MAX_VALUE;// 题目要求
-    } else {
-      int c = div(a + 1, b);// 作为被除数的系统最小+1 令其取绝对值为系统最大 先用其做被除数
-      int d = div(a - multi(b, c), b);// 计算得到的商*除数和实际被除数的差 检查其是否能被除数整除
-      return c + d;// 两步的商相加得到真正的商
-    }
-  } else {
+  if(a != Integer.MIN_VALUE && b != Integer.MIN_VALUE){//不涉及-2^31
     return div(a, b);
+  }else if(a == b){//两数都是-2^31
+    return 1;
+  }else if(b == Integer.MIN_VALUE){//除数为-2^31 肯定不够除
+    return 0;
+  }else{//被除数为-2^31
+    if(b == -1){
+      return Integer.MAX_VALUE;//题目要求
+    }
+    int c = div(a + 1, b);//先令被除数绝对值+1 让它可以用于div()
+    int d = div(a - multi(b, c), b);//检查目前得到的商*除数和被除数之间的差值能否被除数整除
+    return c + d;
   }
 }
 ```
@@ -249,15 +250,10 @@ public int divide(int a, int b) {
 
 @合并 n 个有序链表
 
-将每一个头节点放入小根堆 每次谈出值最小的节点 放入其 next 节点  
+将每一个头节点放入小根堆 每次弹出值最小的节点 然后压入其 next 节点  
 定义比较器来对节点排序
 
 ```java
-public static class ListNode {
-  public int val;
-  public ListNode next;
-}
-
 public ListNode mergeKLists(ListNode[] lists) {
   if (lists == null) {
     return null;
@@ -265,21 +261,21 @@ public ListNode mergeKLists(ListNode[] lists) {
   PriorityQueue<ListNode> heap = new PriorityQueue<>(new ListNodeComparator());
   for (int i = 0; i < lists.length; i++) {
     if (lists[i] != null) {
-      heap.add(lists[i]);//抓取每个链表的头结点
+      heap.add(lists[i]);// 抓取每个链表的头结点 放入小跟堆
     }
   }
-  if (heap.isEmpty()) {//所以链表都为空
+  if (heap.isEmpty()) {// 每个链表都是空链表
     return null;
   }
-  ListNode head = heap.poll();//从小根堆弹出 作为返回链表的头
-  ListNode pre = head;//已穿好的部分的结尾
+  ListNode head = heap.poll();// 从小根堆弹出节点 作为返回链表的头
+  ListNode pre = head;// 指针指向已穿好的部分的结尾
   if (pre.next != null) {
-    heap.add(pre.next);//弹出节点后将其next节点加入小根堆
+    heap.add(pre.next);// 弹出节点后将其next节点加入小根堆
   }
   while (!heap.isEmpty()) {
     ListNode cur = heap.poll();
-    pre.next = cur;//更新pre
-    pre = cur;
+    pre.next = cur;
+    pre = cur;// 更新pre
     if (cur.next != null) {
       heap.add(cur.next);
     }
@@ -287,11 +283,11 @@ public ListNode mergeKLists(ListNode[] lists) {
   return head;
 }
 
-public static class ListNodeComparator implements Comparator<ListNode> {
+public class ListNodeComparator implements Comparator<ListNode> {
 
   @Override
-  public int compare(ListNode L1, ListNode L2) {
-    return L1.val - L2.val;//如果第一个参数较小 且要把它排在前 则需返回负数
+  public int compare(ListNode n1, ListNode n2) {
+    return n1.val - n2.val;// 如果第一个参数的某属性较小 且要把它排在前 则需返回负数
   }
 }
 ```
@@ -303,11 +299,11 @@ public static class ListNodeComparator implements Comparator<ListNode> {
 ```java
 public boolean isSameTree(TreeNode p, TreeNode q) {
   // 先检查头结点 再递归地检查其左树和右树
-  if (p == null ^ q == null) {// 一空一非空
-    return false;
-  }
   if (p == null && q == null) {// 都空
     return true;
+  }
+  if (p == null ^ q == null) {// 一空一非空
+    return false;
   }
   return p.val == q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
 }
