@@ -349,7 +349,7 @@ public int maxDepth(TreeNode root) {
 @根据先序 中序结果建立二叉树
 
 在函数中  
-整个树的头为先序第一个数 在中序中找到这个数 左树即由这个数之前的数组成 确定数字个数后可知在先序中的 index 范围 左树可由递归调用该函数生成  
+整个树的头为先序第一个数 在中序中找到这个数 左树即由这个数之前的数组成 确定组成左树的数字个数后可知在先序中的左树范围 依次建立递归函数生成原树  
 可以用表记录 in[]每个值的位置 找 find 时直接查表
 
 ```java
@@ -387,7 +387,9 @@ public static TreeNode f(int[] pre, int l1, int r1, int[] in, int l2, int r2, Ha
 用 LinkedList 收集代表每一层的 list 新生成的 list 每次都放在最前
 头节点放入队列  
 队列非空时 循环进行下列操作  
-⑴ 求队列的 size 进行 size 次的 ⑵-size 会变化 先抓取当前层的节点个数  
+⑴ 求队列的 size  
+进行 size 次的 ⑵  
+(因为 size 会变化 所以先抓取当前层的节点个数)  
 ⑵ 弹出节点 把它的 val 加入当前层的队列 然后将其左右节点(如果有)加入队列  
 ⑶ 把当前层队列放入结果队列的 0 位置
 
@@ -402,7 +404,7 @@ public List<List<Integer>> levelOrderBottom(TreeNode root) {
   while (!queue.isEmpty()) {
     int size = queue.size();// 获取队列的size 即当前层的节点个数
     List<Integer> curList = new LinkedList<>();
-    for (int i = 0; i < size; i++) {// 对应每个当前层的节点 弹出并记录val 把它的左右节点加入队列
+    for (int i = 0; i < size; i++) {// 弹出所有当前层的节点 并将其val记入当前层的list 把它的左右节点加入队列
       TreeNode cur = queue.poll();
       curList.add(cur.val);
       if (cur.left != null) {
@@ -453,7 +455,7 @@ public static info process(TreeNode root) {
 
 @判断二叉树从头到底部是否存在路径 和为目标值
 
-⑴ 节点已无左右节点-节点的值是否为目标值  
+⑴ base case - 节点已无左右节点-节点的值是否为目标值  
 ⑵ 返回值先设为 false  
 ❶ 有左节点 则递归调用 f(左节点,目标值-当前节点值) 将结果或进 ans  
 ❷ 有右节点 则递归调用 f(右节点,目标值-当前节点值) 将结果或进 ans
