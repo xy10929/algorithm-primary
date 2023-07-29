@@ -531,7 +531,7 @@ public static List<Integer> copy(List<Integer> path) {
 
 ```java
 public boolean isValidBST(TreeNode root) {
-  return process(root).isBST;
+  return f(root).isBST;
 }
 
 public class info {
@@ -546,34 +546,28 @@ public class info {
   }
 }
 
-public info process(TreeNode n) {
+public info f(TreeNode n) {
   if (n == null) {
     return null;// base case难以直接设置 则先返回null 在它的父节点处对子节点为null的情况进行判断和处理
   }
-  info leftinfo = process(n.left);
-  info rightinfo = process(n.right);
+  info leftInfo = f(n.left);
+  info rightInfo = f(n.right);
+  boolean isBST = true;
   int max = n.val;
   int min = n.val;
-  if (leftinfo != null) {
-    max = Math.max(max, leftinfo.max);
-    min = Math.min(min, leftinfo.min);
+  if (leftInfo != null) {// 更新max和min 破坏BST条件时把isBST设为false
+    max = Math.max(max, leftInfo.max);
+    min = Math.min(min, leftInfo.min);
+    if (leftInfo.isBST == false || leftInfo.max >= n.val) {
+      isBST = false;
+    }
   }
-  if (rightinfo != null) {
-    max = Math.max(max, rightinfo.max);
-    min = Math.min(min, rightinfo.min);
-  }
-  boolean isBST = true;// 先设为true 任何不满足搜索的条件都会把isBST更新为false
-  if (leftinfo != null && leftinfo.isBST == false) {
-    isBST = false;
-  }
-  if (rightinfo != null && rightinfo.isBST == false) {
-    isBST = false;
-  }
-  if (leftinfo != null && leftinfo.max >= n.val) {
-    isBST = false;
-  }
-  if (rightinfo != null && rightinfo.min <= n.val) {
-    isBST = false;
+  if (rightInfo != null) {
+    max = Math.max(max, rightInfo.max);
+    min = Math.min(min, rightInfo.min);
+    if (rightInfo.isBST == false || rightInfo.min <= n.val) {
+      isBST = false;
+    }
   }
   return new info(isBST, max, min);
 }
